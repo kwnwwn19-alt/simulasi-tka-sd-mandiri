@@ -1,0 +1,1619 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi TKA SD</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .option-item {
+            transition: all 0.2s ease;
+        }
+        
+        .option-item:hover {
+            transform: translateX(4px);
+        }
+        
+        .nav-btn {
+            transition: all 0.15s ease;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .score-circle {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .math-symbol-btn {
+            transition: all 0.15s ease;
+        }
+
+        .math-symbol-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50"><!-- Login Page -->
+   <div id="login-page" class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+     <div class="text-center mb-8">
+      <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+       <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+       </svg>
+      </div>
+      <h1 id="exam-title-display" class="text-2xl font-bold text-gray-800">SIMULASI TKA SD</h1>
+     </div>
+     <div class="space-y-4">
+      <div><label for="studentName" class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label> <input type="text" id="studentName" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+      </div>
+      <div><label for="absentNum" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Absen</label> <input type="number" id="absentNum" placeholder="Masukkan nomor absen" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+      </div>
+      <div><label for="schoolName" class="block text-sm font-semibold text-gray-700 mb-2">Asal Sekolah</label> <input type="text" id="schoolName" placeholder="Masukkan asal sekolah" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+      </div><button onclick="startExam()" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-600 hover:to-indigo-700 transition shadow-lg hover:shadow-xl"> ?? MULAI UJIAN </button> <button onclick="showAdminLogin()" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition shadow-lg"> ????? ADMIN PANEL </button>
+     </div>
+     <div class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+      <p class="text-sm text-amber-800"><span class="font-bold">?? Petunjuk:</span><br>
+        • Waktu ujian: 150 menit<br>
+        • Jumlah soal: 50 soal<br>
+        • Matematika: 20 soal<br>
+        • Bahasa Indonesia: 30 soal<br><br><span class="font-bold">Jenis Soal:</span><br>
+        • PGS: Pilih 1 jawaban benar<br>
+        • PGK MCMA: Pilih lebih dari 1 jawaban<br>
+        • PGK B/S: Tentukan Benar atau Salah</p>
+     </div>
+    </div>
+   </div><!-- Question Editor Page -->
+   <div id="editor-page" class="hidden min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+     <div class="bg-white rounded-2xl shadow-xl p-6">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b">
+       <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center">
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+         </svg>
+        </div>
+        <div>
+         <h2 class="text-2xl font-bold text-gray-800">Editor Soal</h2>
+         <p class="text-sm text-gray-500">Kelola Bank Soal Ujian</p>
+        </div>
+       </div><button onclick="closeQuestionEditor()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"> ? Kembali </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+       <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+        <p class="text-sm text-blue-600 font-semibold mb-1">Total Soal</p>
+        <p class="text-3xl font-bold text-blue-700" id="editor-total-questions">50</p>
+       </div>
+       <div class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+        <p class="text-sm text-green-600 font-semibold mb-1">Matematika</p>
+        <p class="text-3xl font-bold text-green-700" id="editor-math-count">20</p>
+       </div>
+       <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
+        <p class="text-sm text-purple-600 font-semibold mb-1">Bahasa Indonesia</p>
+        <p class="text-3xl font-bold text-purple-700" id="editor-indo-count">30</p>
+       </div>
+      </div>
+      <div class="flex gap-3 mb-6"><button onclick="showAddQuestion()" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white py-3 rounded-xl font-bold hover:from-emerald-600 hover:to-green-700 transition shadow-lg"> ? Tambah Soal Baru </button> <button onclick="exportQuestions()" class="px-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl font-bold hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"> ?? Export JSON </button> <button onclick="showImportModal()" class="px-6 bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 rounded-xl font-bold hover:from-purple-600 hover:to-pink-700 transition shadow-lg"> ?? Import JSON </button>
+      </div>
+      <div class="mb-4"><label for="filterCategory" class="block text-sm font-semibold text-gray-700 mb-2">Filter Kategori</label> <select id="filterCategory" onchange="filterQuestions()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition"> <option value="">Semua Kategori</option> <option value="Matematika">Matematika</option> <option value="Bahasa Indonesia">Bahasa Indonesia</option> </select>
+      </div>
+      <div id="questions-list" class="space-y-4 max-h-96 overflow-y-auto"></div>
+     </div>
+    </div>
+   </div><!-- Add/Edit Question Modal -->
+   <div id="question-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50 overflow-y-auto">
+    <div class="bg-white rounded-2xl p-6 max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto">
+     <h3 class="text-xl font-bold text-gray-800 mb-4" id="modal-title">Tambah Soal Baru</h3>
+     <div class="space-y-4 mb-4">
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label> <input type="text" id="edit-category" placeholder="Contoh: Matematika - Bilangan" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Jenis Soal</label> <select id="edit-type" onchange="updateQuestionTypeFields()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition"> <option value="PGS">PGS - Pilihan Ganda Sederhana (1 jawaban)</option> <option value="MCMA">MCMA - Multiple Answer (lebih dari 1 jawaban)</option> <option value="BS">BS - Benar/Salah</option> </select>
+      </div><!-- Image Upload Section -->
+      <div class="border-2 border-dashed border-blue-300 rounded-xl p-4 bg-blue-50"><label class="block text-sm font-semibold text-gray-700 mb-2">??? Upload Gambar Soal (Opsional)</label>
+       <p class="text-xs text-gray-500 mb-3">Upload diagram, grafik, atau ilustrasi untuk soal</p><input type="file" id="image-upload" accept="image/*" onchange="handleImageUpload(event)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition text-sm">
+       <div id="image-preview-container" class="mt-3 hidden"><img id="image-preview" class="image-preview rounded-lg border-2 border-gray-200 mx-auto"> <button onclick="removeImage()" class="mt-2 px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 transition"> ??? Hapus Gambar </button>
+       </div>
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Stimulus (Opsional - untuk soal dengan bacaan/data)</label> <textarea id="edit-stimulus" rows="3" placeholder="Contoh: Tabel data penjualan..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition"></textarea>
+      </div><!-- Math Symbols Toolbar -->
+      <div class="border-2 border-purple-300 rounded-xl p-4 bg-purple-50"><label class="block text-sm font-semibold text-gray-700 mb-2">?? Simbol Matematika</label>
+       <p class="text-xs text-gray-500 mb-2">Klik simbol untuk memasukkan ke pertanyaan. Gunakan $ $ untuk inline math, $$ $$ untuk display math</p>
+       <div class="grid grid-cols-8 gap-2 mb-2"><button onclick="insertSymbol('\\frac{a}{b}')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">½</button> <button onclick="insertSymbol('\\sqrt{x}')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">v</button> <button onclick="insertSymbol('x^{2}')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">x²</button> <button onclick="insertSymbol('x_{i}')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">x?</button> <button onclick="insertSymbol('\\times')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">×</button> <button onclick="insertSymbol('\\div')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">÷</button> <button onclick="insertSymbol('\\pm')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">±</button> <button onclick="insertSymbol('\\neq')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">?</button>
+       </div>
+       <div class="grid grid-cols-8 gap-2 mb-2"><button onclick="insertSymbol('\\leq')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">=</button> <button onclick="insertSymbol('\\geq')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">=</button> <button onclick="insertSymbol('\\pi')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">p</button> <button onclick="insertSymbol('\\infty')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">8</button> <button onclick="insertSymbol('\\angle')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">?</button> <button onclick="insertSymbol('\\triangle')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">?</button> <button onclick="insertSymbol('\\circ')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">°</button> <button onclick="insertSymbol('\\%')" class="math-symbol-btn px-3 py-2 bg-white border-2 border-purple-200 rounded-lg hover:bg-purple-100 font-bold text-lg">%</button>
+       </div>
+       <div class="flex gap-2"><button onclick="insertSymbol('$  $', 1)" class="flex-1 px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition"> ?? Inline Math </button> <button onclick="insertSymbol('$$  $$', 2)" class="flex-1 px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-semibold hover:bg-indigo-200 transition"> ?? Display Math </button>
+       </div>
+       <div class="mt-2 text-xs text-gray-600 bg-white p-2 rounded border border-gray-200"><strong>Contoh:</strong> $\frac{3}{4}$ atau $$x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$$
+       </div>
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Pertanyaan</label> <textarea id="edit-question" rows="3" placeholder="Tulis pertanyaan di sini... Gunakan $ $ untuk rumus matematika" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition"></textarea>
+       <div id="question-preview" class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm hidden"></div><button onclick="previewMath('edit-question', 'question-preview')" class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-200 transition"> ??? Preview Rumus </button>
+      </div>
+      <div id="options-editor"><label class="block text-sm font-semibold text-gray-700 mb-2">Pilihan Jawaban</label>
+       <div class="space-y-2">
+        <div><input type="text" id="edit-option-0" placeholder="Opsi A (bisa pakai rumus dengan $ $)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+         <div id="option-preview-0" class="mt-1 text-sm text-gray-600 hidden"></div>
+        </div>
+        <div><input type="text" id="edit-option-1" placeholder="Opsi B (bisa pakai rumus dengan $ $)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+         <div id="option-preview-1" class="mt-1 text-sm text-gray-600 hidden"></div>
+        </div>
+        <div><input type="text" id="edit-option-2" placeholder="Opsi C (bisa pakai rumus dengan $ $)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+         <div id="option-preview-2" class="mt-1 text-sm text-gray-600 hidden"></div>
+        </div>
+        <div><input type="text" id="edit-option-3" placeholder="Opsi D (bisa pakai rumus dengan $ $)" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+         <div id="option-preview-3" class="mt-1 text-sm text-gray-600 hidden"></div>
+        </div>
+       </div><button onclick="previewAllOptions()" class="mt-2 px-4 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-semibold hover:bg-green-200 transition"> ??? Preview Semua Opsi </button>
+      </div>
+      <div id="statements-editor" class="hidden"><label class="block text-sm font-semibold text-gray-700 mb-2">Pernyataan Benar/Salah</label>
+       <div class="space-y-2" id="statements-container"></div><button onclick="addStatement()" class="mt-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-xl font-semibold hover:bg-blue-200 transition"> + Tambah Pernyataan </button>
+      </div>
+      <div id="answer-editor-pgs"><label class="block text-sm font-semibold text-gray-700 mb-2">Jawaban Benar (Pilih 1)</label> <select id="edit-answer-single" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition"> <option value="0">A</option> <option value="1">B</option> <option value="2">C</option> <option value="3">D</option> </select>
+      </div>
+      <div id="answer-editor-mcma" class="hidden"><label class="block text-sm font-semibold text-gray-700 mb-2">Jawaban Benar (Centang semua yang benar)</label>
+       <div class="space-y-2"><label class="flex items-center gap-2"> <input type="checkbox" id="edit-answer-0" class="w-5 h-5 rounded border-gray-300"> <span>A</span> </label> <label class="flex items-center gap-2"> <input type="checkbox" id="edit-answer-1" class="w-5 h-5 rounded border-gray-300"> <span>B</span> </label> <label class="flex items-center gap-2"> <input type="checkbox" id="edit-answer-2" class="w-5 h-5 rounded border-gray-300"> <span>C</span> </label> <label class="flex items-center gap-2"> <input type="checkbox" id="edit-answer-3" class="w-5 h-5 rounded border-gray-300"> <span>D</span> </label>
+       </div>
+      </div>
+     </div>
+     <div class="flex gap-3"><button onclick="closeQuestionModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"> Batal </button> <button onclick="saveQuestion()" class="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-green-700 transition"> ?? Simpan </button>
+     </div>
+    </div>
+   </div><!-- Import Modal -->
+   <div id="import-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-2xl w-full">
+     <h3 class="text-xl font-bold text-gray-800 mb-4">Import Soal dari JSON</h3>
+     <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2">Paste JSON Array di sini</label> <textarea id="import-json" rows="10" placeholder="[{&quot;category&quot;:&quot;Matematika&quot;,&quot;type&quot;:&quot;PGS&quot;,...}]" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition font-mono text-sm"></textarea>
+     </div>
+     <div class="flex gap-3"><button onclick="closeImportModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"> Batal </button> <button onclick="importQuestions()" class="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition"> ?? Import </button>
+     </div>
+    </div>
+   </div><!-- Exam Page -->
+   <div id="exam-page" class="hidden p-4">
+    <div class="max-w-6xl mx-auto">
+     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6"><!-- Main Content -->
+      <div class="lg:col-span-3">
+       <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b">
+         <div>
+          <h2 id="question-category" class="text-lg font-bold text-indigo-600">Matematika</h2><span id="question-type" class="text-xs font-semibold text-gray-500 mt-1 inline-block">PGS - Pilihan Ganda Sederhana</span>
+         </div><span id="question-number" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full font-bold">Soal 1/50</span>
+        </div>
+        <div id="question-image-box" class="mb-6 hidden"><img id="question-image" class="w-full max-w-2xl mx-auto rounded-xl border-2 border-gray-200 shadow-lg">
+        </div>
+        <div id="stimulus-box" class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl mb-6 border-l-4 border-blue-500 hidden">
+         <p id="stimulus-text" class="text-gray-700 leading-relaxed"></p>
+        </div>
+        <div id="question-container" class="fade-in">
+         <p id="question-text" class="text-lg font-semibold text-gray-800 mb-6 leading-relaxed"></p>
+         <div id="options-container" class="space-y-3"></div>
+        </div>
+        <div class="flex justify-between mt-8 pt-6 border-t"><button onclick="prevQuestion()" class="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg> Sebelumnya </button> <button onclick="nextQuestion()" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"> Selanjutnya 
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg></button>
+        </div>
+       </div>
+      </div><!-- Sidebar -->
+      <div class="lg:col-span-1">
+       <div class="bg-white rounded-2xl shadow-lg p-5 sticky top-4">
+        <div class="mb-6">
+         <p class="text-sm text-gray-500 font-semibold mb-2">?? Sisa Waktu</p>
+         <div id="timer" class="text-3xl font-bold text-red-500 text-center py-4 bg-red-50 rounded-xl">
+          150:00
+         </div>
+        </div>
+        <div class="mb-4">
+         <p class="text-sm text-gray-500 font-semibold mb-2">?? Progres</p>
+         <div class="w-full bg-gray-200 rounded-full h-3">
+          <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+         </div>
+         <p id="progress-text" class="text-sm text-gray-600 mt-2 text-center">0/50 dijawab</p>
+        </div>
+        <div>
+         <p class="text-sm text-gray-500 font-semibold mb-3">?? Navigasi Soal</p>
+         <div id="nav-grid" class="grid grid-cols-5 gap-2 max-h-96 overflow-y-auto"></div>
+        </div><button onclick="confirmFinish()" class="w-full mt-6 bg-gradient-to-r from-emerald-500 to-green-600 text-white py-3 rounded-xl font-bold hover:from-emerald-600 hover:to-green-700 transition shadow-lg"> ? Selesai Ujian </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Confirm Modal -->
+   <div id="confirm-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+     <div class="text-center">
+      <div class="w-16 h-16 bg-amber-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+       <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+       </svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-800 mb-2">Selesaikan Ujian?</h3>
+      <p id="unanswered-warning" class="text-gray-600 mb-6"></p>
+      <div class="flex gap-3"><button onclick="closeModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"> Kembali </button> <button onclick="finishExam()" class="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-green-700 transition"> Ya, Selesai </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Result Page -->
+   <div id="result-page" class="hidden min-h-screen p-4">
+    <div class="max-w-2xl mx-auto">
+     <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+      <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-green-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+       <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Ujian Selesai! ??</h2>
+      <p id="result-student-name" class="text-gray-600 mb-2"></p>
+      <p id="result-school-name" class="text-gray-500 mb-8"></p>
+      <div class="score-circle w-40 h-40 mx-auto mb-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-xl"><span id="score-display" class="text-4xl font-bold text-white">0.00</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+       <div class="bg-green-50 p-4 rounded-xl">
+        <p class="text-3xl font-bold text-green-600" id="correct-count">0</p>
+        <p class="text-sm text-green-700">Benar Penuh</p>
+       </div>
+       <div class="bg-blue-50 p-4 rounded-xl">
+        <p class="text-3xl font-bold text-blue-600" id="partial-count">0</p>
+        <p class="text-sm text-blue-700">Sebagian Benar</p>
+       </div>
+       <div class="bg-red-50 p-4 rounded-xl">
+        <p class="text-3xl font-bold text-red-600" id="wrong-count">0</p>
+        <p class="text-sm text-red-700">Salah</p>
+       </div>
+       <div class="bg-gray-50 p-4 rounded-xl">
+        <p class="text-3xl font-bold text-gray-600" id="empty-count">0</p>
+        <p class="text-sm text-gray-700">Kosong</p>
+       </div>
+      </div>
+      <div id="result-details" class="text-left bg-gray-50 rounded-xl p-4 mb-6 max-h-64 overflow-y-auto"></div>
+      <div class="space-y-3"><button onclick="restartExam()" class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition shadow-lg"> ?? Ulangi Ujian </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Admin Login Modal -->
+   <div id="admin-login-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+     <div class="text-center">
+      <div class="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+       <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+       </svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Admin Login</h3>
+      <div class="mb-4"><label for="adminPin" class="block text-sm font-semibold text-gray-700 mb-2 text-left">Masukkan PIN Admin</label> <input type="password" id="adminPin" placeholder="Masukkan PIN" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition">
+      </div>
+      <div id="admin-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+       PIN salah! Silakan coba lagi.
+      </div>
+      <div class="flex gap-3"><button onclick="closeAdminLogin()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"> Batal </button> <button onclick="loginAdmin()" class="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition"> Masuk </button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Admin Panel -->
+   <div id="admin-page" class="hidden min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+     <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-6">
+       <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+         </svg>
+        </div>
+        <div>
+         <h2 class="text-2xl font-bold text-gray-800">Admin Panel</h2>
+         <p class="text-sm text-gray-500">Monitor dan Kelola Data Peserta Ujian</p>
+        </div>
+       </div>
+       <div class="flex gap-2"><button onclick="showQuestionEditorFromAdmin()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl font-semibold hover:from-amber-600 hover:to-orange-700 transition shadow-lg"> ?? Editor Soal </button> <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-100 text-red-600 rounded-xl font-semibold hover:bg-red-200 transition"> ?? Keluar </button>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+       <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+        <p class="text-sm text-blue-600 font-semibold mb-1">Total Peserta</p>
+        <p class="text-3xl font-bold text-blue-700" id="admin-total-students">0</p>
+       </div>
+       <div class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+        <p class="text-sm text-green-600 font-semibold mb-1">Rata-rata Nilai</p>
+        <p class="text-3xl font-bold text-green-700" id="admin-avg-score">0</p>
+       </div>
+       <div class="bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-xl border border-amber-200">
+        <p class="text-sm text-amber-600 font-semibold mb-1">Nilai Tertinggi</p>
+        <p class="text-3xl font-bold text-amber-700" id="admin-max-score">0</p>
+       </div>
+       <div class="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-xl border border-red-200">
+        <p class="text-sm text-red-600 font-semibold mb-1">Nilai Terendah</p>
+        <p class="text-3xl font-bold text-red-700" id="admin-min-score">0</p>
+       </div>
+      </div>
+      <div class="flex items-center justify-between mb-4">
+       <h3 class="text-lg font-bold text-gray-800">?? Daftar Peserta Ujian</h3><button onclick="downloadRecap()" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-green-700 transition shadow-lg"> ?? Unduh Rekap Excel </button>
+      </div>
+      <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+       <p class="text-sm text-blue-800"><span class="font-bold">?? Catatan:</span> Jika data rekap kosong, coba <span class="font-bold">refresh halaman (F5)</span> dan masuk admin panel kembali.</p>
+      </div>
+      <div class="overflow-x-auto">
+       <table class="w-full">
+        <thead>
+         <tr class="bg-gray-50 border-b-2 border-gray-200">
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">No</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Nama Siswa</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">No. Absen</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Asal Sekolah</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Nilai</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Benar</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Salah</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Kosong</th>
+          <th class="px-4 py-3 text-left text-sm font-bold text-gray-700">Waktu Selesai</th>
+         </tr>
+        </thead>
+        <tbody id="admin-table-body">
+         <tr>
+          <td colspan="9" class="px-4 py-8 text-center text-gray-400">Belum ada data peserta ujian</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+        exam_title: "SIMULASI TKA SD",
+        school_name: "SD Negeri 1",
+        admin_pin: "1234"
+    };
+
+    let studentsData = [];
+    let isDataSdkReady = false;
+    let currentImageData = null;
+    let lastFocusedInput = null;
+
+    let questions = [
+        // === MATEMATIKA: BILANGAN === (6 soal)
+        { category: "Matematika - Bilangan", type: "PGS", question: "Hasil dari 125 + 78 - 43 adalah...", options: ["160", "150", "170", "140"], answer: [0] },
+        { category: "Matematika - Bilangan", type: "PGS", question: "Hasil dari 156 × 4 adalah...", options: ["524", "624", "604", "634"], answer: [1] },
+        { category: "Matematika - Bilangan", type: "PGS", question: "KPK dari 12 dan 18 adalah...", options: ["36", "54", "72", "24"], answer: [0] },
+        { category: "Matematika - Bilangan", type: "MCMA", question: "Manakah bilangan prima di bawah ini? (Pilih semua yang benar)", options: ["2", "4", "7", "9"], answer: [0, 2] },
+        { category: "Matematika - Bilangan", type: "MCMA", question: "Faktor dari 12 adalah... (Pilih semua yang benar)", options: ["2", "3", "5", "4"], answer: [0, 1, 3] },
+        { category: "Matematika - Bilangan", type: "BS", question: "Tentukan hasil operasi hitung berikut Benar atau Salah:", statements: ["5 + 7 = 12", "3 × 4 = 15", "20 : 5 = 4", "8 - 3 = 6"], answer: [true, false, true, false] },
+        
+        // === MATEMATIKA: GEOMETRI DAN PENGUKURAN === (11 soal)
+        { category: "Matematika - Geometri", type: "PGS", question: "Luas persegi dengan sisi 9 cm adalah...", options: ["18 cm²", "36 cm²", "81 cm²", "72 cm²"], answer: [2] },
+        { category: "Matematika - Geometri", type: "PGS", question: "Keliling lingkaran dengan diameter 14 cm adalah... (p = 22/7)", options: ["44 cm", "88 cm", "22 cm", "154 cm"], answer: [0] },
+        { category: "Matematika - Geometri", type: "PGS", question: "Volume kubus dengan sisi 5 cm adalah...", options: ["25 cm³", "75 cm³", "125 cm³", "100 cm³"], answer: [2] },
+        { category: "Matematika - Geometri", type: "PGS", question: "Luas segitiga dengan alas 8 cm dan tinggi 6 cm adalah...", options: ["14 cm²", "24 cm²", "48 cm²", "32 cm²"], answer: [1] },
+        { category: "Matematika - Geometri", type: "PGS", question: "Keliling persegi panjang dengan panjang 12 cm dan lebar 8 cm adalah...", options: ["20 cm", "40 cm", "96 cm", "32 cm"], answer: [1] },
+        { category: "Matematika - Geometri", type: "PGS", question: "Luas lingkaran dengan jari-jari 7 cm adalah... (p = 22/7)", options: ["154 cm²", "44 cm²", "308 cm²", "22 cm²"], answer: [0] },
+        { category: "Matematika - Geometri", type: "MCMA", question: "Manakah yang termasuk bangun datar? (Pilih semua yang benar)", options: ["Segitiga", "Kubus", "Persegi", "Lingkaran"], answer: [0, 2, 3] },
+        { category: "Matematika - Geometri", type: "MCMA", question: "Manakah yang termasuk bangun ruang? (Pilih semua yang benar)", options: ["Balok", "Trapesium", "Bola", "Kerucut"], answer: [0, 2, 3] },
+        { category: "Matematika - Geometri", type: "BS", question: "Tentukan pernyataan tentang geometri berikut Benar atau Salah:", statements: ["Persegi memiliki 4 sisi sama panjang", "Segitiga memiliki 4 sudut", "Lingkaran tidak memiliki sudut", "Persegi panjang memiliki 2 pasang sisi sejajar"], answer: [true, false, true, true] },
+        { category: "Matematika - Geometri", type: "BS", question: "Tentukan pernyataan tentang satuan ukuran berikut Benar atau Salah:", statements: ["100 cm = 1 meter", "1 kg = 100 gram", "1 jam = 60 menit", "1 km = 100 meter"], answer: [true, false, true, false] },
+        { category: "Matematika - Geometri", type: "BS", question: "Tentukan pernyataan tentang bangun datar berikut Benar atau Salah:", statements: ["Segitiga memiliki 3 sisi", "Persegi adalah jajargenjang", "Lingkaran memiliki 4 sudut", "Trapesium memiliki sepasang sisi sejajar"], answer: [true, true, false, true] },
+        
+        // === MATEMATIKA: DATA === (3 soal)
+        { category: "Matematika - Data", type: "PGS", stimulus: "Tabel Penjualan Buku Toko 'Cerdas' Minggu Ini:\n• Senin: 15 buku\n• Selasa: 20 buku\n• Rabu: 18 buku\n• Kamis: 22 buku\n• Jumat: 25 buku", question: "Pada hari apa penjualan buku paling banyak?", options: ["Senin", "Rabu", "Kamis", "Jumat"], answer: [3] },
+        { category: "Matematika - Data", type: "MCMA", stimulus: "Diagram batang menunjukkan hobi siswa kelas 6:\n• Membaca: 12 siswa\n• Olahraga: 18 siswa\n• Menggambar: 10 siswa\n• Musik: 8 siswa", question: "Manakah pernyataan yang benar? (Pilih semua yang benar)", options: ["Hobi terpopuler adalah olahraga", "Musik lebih diminati dari menggambar", "Selisih siswa yang hobi membaca dan musik adalah 4 orang", "Total siswa adalah 48 orang"], answer: [0, 2, 3] },
+        { category: "Matematika - Data", type: "BS", stimulus: "Nilai ujian Matematika 5 siswa:\nAni: 85, Budi: 90, Citra: 75, Doni: 90, Eka: 80", question: "Tentukan pernyataan berikut Benar atau Salah:", statements: ["Budi dan Doni mendapat nilai tertinggi", "Rata-rata nilai kelima siswa adalah 84", "Citra mendapat nilai terendah", "Selisih nilai tertinggi dan terendah adalah 15"], answer: [true, true, true, true] },
+        
+        // === BAHASA INDONESIA === (30 soal)
+        // PGS (15 soal)
+        { category: "Bahasa Indonesia", type: "PGS", stimulus: "Pemanfaatan Sampah di Lingkungan Kita\n\nSampah merupakan sisa barang yang tidak terpakai. Di lingkungan rumah, kita sering menemukan sampah plastik dan sisa makanan. Sampah plastik sulit hancur, sedangkan sisa makanan bisa membusuk. Kita harus membuang sampah pada tempatnya agar lingkungan tetap bersih dan sehat. Pemerintah daerah mengajak warga untuk mulai memilah sampah sejak dari rumah.", question: "Apa topik utama dari teks di atas?", options: ["Cara membuang sampah plastik", "Pemanfaatan dan pengelolaan sampah", "Jenis-jenis makanan sehat", "Harga plastik di pasar"], answer: [1] },
+        { category: "Bahasa Indonesia", type: "PGS", stimulus: "Pemanfaatan Sampah di Lingkungan Kita\n\nSampah merupakan sisa barang yang tidak terpakai. Di lingkungan rumah, kita sering menemukan sampah plastik dan sisa makanan. Sampah plastik sulit hancur, sedangkan sisa makanan bisa membusuk. Kita harus membuang sampah pada tempatnya agar lingkungan tetap bersih dan sehat. Pemerintah daerah mengajak warga untuk mulai memilah sampah sejak dari rumah.", question: "Di mana kita sering menemukan sampah plastik menurut teks?", options: ["Di sekolah saja", "Di lingkungan rumah", "Di dalam hutan", "Di bawah laut"], answer: [1] },
+        { category: "Bahasa Indonesia", type: "PGS", stimulus: "Pemanfaatan Sampah di Lingkungan Kita\n\nSampah merupakan sisa barang yang tidak terpakai. Di lingkungan rumah, kita sering menemukan sampah plastik dan sisa makanan. Sampah plastik sulit hancur, sedangkan sisa makanan bisa membusuk. Kita harus membuang sampah pada tempatnya agar lingkungan tetap bersih dan sehat. Pemerintah daerah mengajak warga untuk mulai memilah sampah sejak dari rumah.", question: "Mengapa kita harus membuang sampah pada tempatnya?", options: ["Agar lingkungan bersih dan sehat", "Agar sampah cepat hilang", "Agar plastik menjadi mahal", "Karena disuruh oleh teman"], answer: [0] },
+        { category: "Bahasa Indonesia", type: "PGS", stimulus: "Kancil dan Buaya\n\nDi sebuah sungai yang jernih, Kancil ingin menyeberang untuk mencari buah apel. Namun, banyak buaya lapar di sana. Kancil berkata, 'Hai Buaya, aku membawa daging segar dari Raja!' Buaya sangat senang. Kancil meminta buaya berbaris agar bisa dihitung. Kancil pun melompat di atas punggung buaya hingga sampai ke seberang. Ternyata, Kancil hanya membohongi buaya agar bisa lewat.", question: "Siapa tokoh utama dalam cerita di atas?", options: ["Raja", "Buaya", "Kancil", "Penjual Apel"], answer: [2] },
+        { category: "Bahasa Indonesia", type: "PGS", stimulus: "Kancil dan Buaya\n\nDi sebuah sungai yang jernih, Kancil ingin menyeberang untuk mencari buah apel. Namun, banyak buaya lapar di sana. Kancil berkata, 'Hai Buaya, aku membawa daging segar dari Raja!' Buaya sangat senang. Kancil meminta buaya berbaris agar bisa dihitung. Kancil pun melompat di atas punggung buaya hingga sampai ke seberang. Ternyata, Kancil hanya membohongi buaya agar bisa lewat.", question: "Di mana latar tempat cerita tersebut?", options: ["Sungai yang jernih", "Kebun apel yang luas", "Di dalam istana", "Di tengah pasar"], answer: [0] },
+        { category: "Bahasa Indonesia", type: "PGS", stimulus: "Kancil dan Buaya\n\nDi sebuah sungai yang jernih, Kancil ingin menyeberang untuk mencari buah apel. Namun, banyak buaya lapar di sana. Kancil berkata, 'Hai Buaya, aku membawa daging segar dari Raja!' Buaya sangat senang. Kancil meminta buaya berbaris agar bisa dihitung. Kancil pun melompat di atas punggung buaya hingga sampai ke seberang. Ternyata, Kancil hanya membohongi buaya agar bisa lewat.", question: "Mengapa Kancil membohongi buaya?", options: ["Karena kancil sedang marah", "Agar buaya mendapatkan daging", "Agar bisa menyeberang sungai", "Karena ingin bermain air"], answer: [2] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Kata baku dari 'nasehat' adalah...", options: ["Nasehat", "Nasihat", "Nasehad", "Nasihad"], answer: [1] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Antonim dari kata 'rajin' adalah...", options: ["Giat", "Tekun", "Malas", "Cekatan"], answer: [2] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Jenis kata 'berlari' adalah...", options: ["Kata benda", "Kata kerja", "Kata sifat", "Kata keterangan"], answer: [1] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Sinonim dari kata 'pandai' adalah...", options: ["Bodoh", "Cerdas", "Lambat", "Dungu"], answer: [1] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Antonim dari kata 'senang' adalah...", options: ["Gembira", "Bahagia", "Sedih", "Riang"], answer: [2] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Jenis kalimat 'Tolong tutup pintunya!' adalah...", options: ["Kalimat berita", "Kalimat tanya", "Kalimat perintah", "Kalimat seru"], answer: [2] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Sinonim dari kata 'indah' adalah...", options: ["Jelek", "Cantik", "Buruk", "Rusak"], answer: [1] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Manakah yang merupakan contoh kata berimbuhan?", options: ["Makan", "Buku", "Berjalan", "Rumah"], answer: [2] },
+        { category: "Bahasa Indonesia", type: "PGS", question: "Kalimat 'Ibu memasak nasi di dapur' memiliki pola...", options: ["S-P-O-K", "S-P-K", "S-O-K", "P-S-O"], answer: [0] },
+        
+        // MCMA (8 soal)
+        { category: "Bahasa Indonesia", type: "MCMA", stimulus: "Pemanfaatan Sampah di Lingkungan Kita\n\nSampah merupakan sisa barang yang tidak terpakai. Di lingkungan rumah, kita sering menemukan sampah plastik dan sisa makanan. Sampah plastik sulit hancur, sedangkan sisa makanan bisa membusuk. Kita harus membuang sampah pada tempatnya agar lingkungan tetap bersih dan sehat. Pemerintah daerah mengajak warga untuk mulai memilah sampah sejak dari rumah.", question: "Berdasarkan teks, apa saja jenis sampah yang disebutkan? (Pilih semua yang benar)", options: ["Sampah plastik", "Sampah kaca", "Sisa makanan", "Sampah kertas"], answer: [0, 2] },
+        { category: "Bahasa Indonesia", type: "MCMA", question: "Manfaat dari lingkungan yang bersih adalah... (Pilih semua yang benar)", options: ["Tubuh menjadi sehat", "Sampah menjadi banyak", "Lingkungan terasa nyaman", "Udara menjadi berdebu"], answer: [0, 2] },
+        { category: "Bahasa Indonesia", type: "MCMA", stimulus: "Kancil dan Buaya\n\nDi sebuah sungai yang jernih, Kancil ingin menyeberang untuk mencari buah apel. Namun, banyak buaya lapar di sana. Kancil berkata, 'Hai Buaya, aku membawa daging segar dari Raja!' Buaya sangat senang. Kancil meminta buaya berbaris agar bisa dihitung. Kancil pun melompat di atas punggung buaya hingga sampai ke seberang. Ternyata, Kancil hanya membohongi buaya agar bisa lewat.", question: "Apa saja karakter yang menonjol dari tokoh Kancil? (Pilih semua yang benar)", options: ["Cerdik", "Pemalas", "Suka menipu", "Penakut"], answer: [0, 2] },
+        { category: "Bahasa Indonesia", type: "MCMA", question: "Manakah yang termasuk kata kerja? (Pilih semua yang benar)", options: ["Berlari", "Menulis", "Indah", "Membaca"], answer: [0, 1, 3] },
+        { category: "Bahasa Indonesia", type: "MCMA", question: "Manakah yang termasuk kata sifat? (Pilih semua yang benar)", options: ["Cantik", "Berlari", "Tinggi", "Pandai"], answer: [0, 2, 3] },
+        { category: "Bahasa Indonesia", type: "MCMA", question: "Kata berikut yang bersinonim dengan 'senang' adalah... (Pilih semua yang benar)", options: ["Gembira", "Sedih", "Bahagia", "Riang"], answer: [0, 2, 3] },
+        { category: "Bahasa Indonesia", type: "MCMA", question: "Manakah yang termasuk kata benda? (Pilih semua yang benar)", options: ["Buku", "Berlari", "Meja", "Pensil"], answer: [0, 2, 3] },
+        { category: "Bahasa Indonesia", type: "MCMA", question: "Manakah yang termasuk jenis-jenis puisi? (Pilih semua yang benar)", options: ["Pantun", "Artikel", "Sajak", "Cerpen"], answer: [0, 2] },
+        
+        // BS (7 soal)
+        { category: "Bahasa Indonesia", type: "BS", stimulus: "Pemanfaatan Sampah di Lingkungan Kita\n\nSampah merupakan sisa barang yang tidak terpakai. Di lingkungan rumah, kita sering menemukan sampah plastik dan sisa makanan. Sampah plastik sulit hancur, sedangkan sisa makanan bisa membusuk. Kita harus membuang sampah pada tempatnya agar lingkungan tetap bersih dan sehat. Pemerintah daerah mengajak warga untuk mulai memilah sampah sejak dari rumah.", question: "Tentukan pernyataan berikut Benar atau Salah berdasarkan teks:", statements: ["Sampah plastik sangat mudah hancur secara alami", "Sisa makanan adalah contoh sampah yang bisa membusuk", "Pemerintah mengajak warga memilah sampah dari rumah", "Teks di atas merupakan jenis teks fiksi/rekaan"], answer: [false, true, true, false] },
+        { category: "Bahasa Indonesia", type: "BS", stimulus: "Kancil dan Buaya\n\nDi sebuah sungai yang jernih, Kancil ingin menyeberang untuk mencari buah apel. Namun, banyak buaya lapar di sana. Kancil berkata, 'Hai Buaya, aku membawa daging segar dari Raja!' Buaya sangat senang. Kancil meminta buaya berbaris agar bisa dihitung. Kancil pun melompat di atas punggung buaya hingga sampai ke seberang. Ternyata, Kancil hanya membohongi buaya agar bisa lewat.", question: "Tentukan pernyataan berikut Benar atau Salah berdasarkan cerita:", statements: ["Cerita 'Kancil dan Buaya' termasuk jenis teks informasi", "Kancil menggunakan akalnya untuk menipu buaya", "Alur cerita di atas adalah alur maju", "Sudut pandang yang digunakan adalah orang pertama (Aku)"], answer: [false, true, true, false] },
+        { category: "Bahasa Indonesia", type: "BS", question: "Tentukan jenis kata berikut Benar atau Salah:", statements: ["'Berlari' adalah kata kerja", "'Indah' adalah kata sifat", "'Buku' adalah kata kerja", "'Dengan cepat' adalah kata keterangan"], answer: [true, true, false, true] },
+        { category: "Bahasa Indonesia", type: "BS", stimulus: "Bacalah kutipan cerita berikut:\n\n'Mentari pagi menyingsing dengan gagah. Burung-burung berkicau riang di dahan pohon. Angin sepoi-sepoi membelai dedaunan yang masih basah oleh embun. Suasana pagi itu begitu damai dan menenangkan hati.'", question: "Tentukan pernyataan tentang gaya bahasa dalam teks tersebut Benar atau Salah:", statements: ["Teks menggunakan majas personifikasi pada 'mentari menyingsing dengan gagah'", "Kata 'sepoi-sepoi' merupakan contoh onomatope (tiruan bunyi)", "Kalimat 'membelai dedaunan' menggunakan majas metafora", "Suasana yang digambarkan dalam teks adalah suasana sore hari"], answer: [true, true, false, false] },
+        { category: "Bahasa Indonesia", type: "BS", question: "Tentukan pernyataan tentang sinonim berikut Benar atau Salah:", statements: ["'Pandai' bersinonim dengan 'cerdas'", "'Rajin' bersinonim dengan 'malas'", "'Indah' bersinonim dengan 'cantik'", "'Senang' bersinonim dengan 'sedih'"], answer: [true, false, true, false] },
+        { category: "Bahasa Indonesia", type: "BS", question: "Tentukan pernyataan tentang antonim berikut Benar atau Salah:", statements: ["'Tinggi' berantonim dengan 'rendah'", "'Panas' berantonim dengan 'dingin'", "'Rajin' berantonim dengan 'giat'", "'Senang' berantonim dengan 'sedih'"], answer: [true, true, false, true] },
+        { category: "Bahasa Indonesia", type: "BS", question: "Tentukan jenis kalimat berikut Benar atau Salah:", statements: ["'Tutup pintu!' adalah kalimat perintah", "'Siapa namamu?' adalah kalimat tanya", "'Hari ini cerah' adalah kalimat berita", "'Wah, bagus sekali!' adalah kalimat tanya"], answer: [true, true, true, false] }
+    ];
+
+    let currentQuestion = 0;
+    let answers = new Array(questions.length).fill(null);
+    let timer;
+    let timeLeft = 150 * 60;
+    let studentName = "";
+    let absentNum = "";
+    let schoolName = "";
+    let editingIndex = -1;
+
+    // Track focused input for symbol insertion
+    document.addEventListener('focusin', (e) => {
+        if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+            lastFocusedInput = e.target;
+        }
+    });
+
+    // Math Symbol Functions
+    function insertSymbol(symbol, cursorOffset = symbol.length / 2) {
+        const input = lastFocusedInput || document.getElementById('edit-question');
+        if (!input) return;
+
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const text = input.value;
+        
+        input.value = text.substring(0, start) + symbol + text.substring(end);
+        
+        const newPosition = start + (symbol.length - cursorOffset);
+        input.setSelectionRange(newPosition, newPosition);
+        input.focus();
+    }
+
+    function previewMath(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        
+        if (!input || !preview) return;
+        
+        const text = input.value.trim();
+        if (!text) {
+            preview.classList.add('hidden');
+            return;
+        }
+        
+        preview.innerHTML = text;
+        preview.classList.remove('hidden');
+        
+        if (window.MathJax) {
+            MathJax.typesetPromise([preview]).catch((err) => console.log('MathJax error:', err));
+        }
+    }
+
+    function previewAllOptions() {
+        for (let i = 0; i < 4; i++) {
+            const input = document.getElementById(`edit-option-${i}`);
+            const preview = document.getElementById(`option-preview-${i}`);
+            
+            if (!input || !preview) continue;
+            
+            const text = input.value.trim();
+            if (!text) {
+                preview.classList.add('hidden');
+                continue;
+            }
+            
+            preview.innerHTML = text;
+            preview.classList.remove('hidden');
+        }
+        
+        if (window.MathJax) {
+            const previews = [0, 1, 2, 3].map(i => document.getElementById(`option-preview-${i}`));
+            MathJax.typesetPromise(previews).catch((err) => console.log('MathJax error:', err));
+        }
+    }
+
+    // Image Upload Functions
+    function handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            showToast('? Ukuran gambar terlalu besar! Maksimal 2MB', 'red');
+            event.target.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentImageData = e.target.result;
+            
+            const preview = document.getElementById('image-preview');
+            const container = document.getElementById('image-preview-container');
+            
+            preview.src = currentImageData;
+            container.classList.remove('hidden');
+            
+            showToast('? Gambar berhasil diupload!', 'green');
+        };
+        
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        currentImageData = null;
+        document.getElementById('image-upload').value = '';
+        document.getElementById('image-preview-container').classList.add('hidden');
+        showToast('??? Gambar dihapus', 'gray');
+    }
+
+    // Question Editor Functions
+    let editorReturnTo = 'login'; // Track where to return after closing editor
+
+    function showQuestionEditor() {
+        editorReturnTo = 'login';
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('editor-page').classList.remove('hidden');
+        updateEditorStats();
+        renderQuestionsList();
+    }
+
+    function showQuestionEditorFromAdmin() {
+        editorReturnTo = 'admin';
+        document.getElementById('admin-page').classList.add('hidden');
+        document.getElementById('admin-page').style.display = 'none';
+        document.getElementById('editor-page').classList.remove('hidden');
+        updateEditorStats();
+        renderQuestionsList();
+    }
+
+    function closeQuestionEditor() {
+        document.getElementById('editor-page').classList.add('hidden');
+        
+        if (editorReturnTo === 'admin') {
+            document.getElementById('admin-page').classList.remove('hidden');
+            document.getElementById('admin-page').style.display = 'block';
+            updateAdminDashboard();
+        } else {
+            document.getElementById('login-page').classList.remove('hidden');
+        }
+    }
+
+    function updateEditorStats() {
+        const mathCount = questions.filter(q => q.category.includes('Matematika')).length;
+        const indoCount = questions.filter(q => q.category.includes('Bahasa Indonesia')).length;
+        
+        document.getElementById('editor-total-questions').textContent = questions.length;
+        document.getElementById('editor-math-count').textContent = mathCount;
+        document.getElementById('editor-indo-count').textContent = indoCount;
+    }
+
+    function filterQuestions() {
+        renderQuestionsList();
+    }
+
+    function renderQuestionsList() {
+        const filter = document.getElementById('filterCategory').value;
+        const container = document.getElementById('questions-list');
+        
+        let filteredQuestions = questions;
+        if (filter) {
+            filteredQuestions = questions.filter(q => q.category.includes(filter));
+        }
+        
+        if (filteredQuestions.length === 0) {
+            container.innerHTML = '<div class="text-center text-gray-400 py-8">Tidak ada soal</div>';
+            return;
+        }
+        
+        container.innerHTML = filteredQuestions.map((q, originalIndex) => {
+            const actualIndex = questions.indexOf(q);
+            return `
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Soal ${actualIndex + 1}</span>
+                                <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">${q.type}</span>
+                                <span class="text-xs text-gray-500">${q.category}</span>
+                                ${q.image ? '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">???</span>' : ''}
+                            </div>
+                            <p class="text-sm text-gray-800 font-medium">${q.question.substring(0, 80)}${q.question.length > 80 ? '...' : ''}</p>
+                            ${q.stimulus ? `<p class="text-xs text-gray-500 mt-1 italic">+ Dengan Stimulus</p>` : ''}
+                        </div>
+                        <div class="flex gap-2 ml-4">
+                            <button onclick="editQuestion(${actualIndex})" class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-200 transition">
+                                ?? Edit
+                            </button>
+                            <button onclick="deleteQuestion(${actualIndex})" class="px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 transition">
+                                ??? Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function showAddQuestion() {
+        editingIndex = -1;
+        currentImageData = null;
+        document.getElementById('modal-title').textContent = 'Tambah Soal Baru';
+        
+        // Clear form
+        document.getElementById('edit-category').value = '';
+        document.getElementById('edit-type').value = 'PGS';
+        document.getElementById('edit-stimulus').value = '';
+        document.getElementById('edit-question').value = '';
+        document.getElementById('edit-option-0').value = '';
+        document.getElementById('edit-option-1').value = '';
+        document.getElementById('edit-option-2').value = '';
+        document.getElementById('edit-option-3').value = '';
+        document.getElementById('edit-answer-single').value = '0';
+        document.getElementById('image-upload').value = '';
+        document.getElementById('image-preview-container').classList.add('hidden');
+        document.getElementById('question-preview').classList.add('hidden');
+        
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`option-preview-${i}`).classList.add('hidden');
+        }
+        
+        updateQuestionTypeFields();
+        document.getElementById('question-modal').classList.remove('hidden');
+    }
+
+    function editQuestion(index) {
+        editingIndex = index;
+        const q = questions[index];
+        
+        document.getElementById('modal-title').textContent = `Edit Soal ${index + 1}`;
+        document.getElementById('edit-category').value = q.category;
+        document.getElementById('edit-type').value = q.type;
+        document.getElementById('edit-stimulus').value = q.stimulus || '';
+        document.getElementById('edit-question').value = q.question;
+        
+        // Handle image
+        if (q.image) {
+            currentImageData = q.image;
+            document.getElementById('image-preview').src = q.image;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        } else {
+            currentImageData = null;
+            document.getElementById('image-preview-container').classList.add('hidden');
+        }
+        
+        if (q.type === 'PGS' || q.type === 'MCMA') {
+            document.getElementById('edit-option-0').value = q.options[0] || '';
+            document.getElementById('edit-option-1').value = q.options[1] || '';
+            document.getElementById('edit-option-2').value = q.options[2] || '';
+            document.getElementById('edit-option-3').value = q.options[3] || '';
+            
+            if (q.type === 'PGS') {
+                document.getElementById('edit-answer-single').value = q.answer[0];
+            } else {
+                for (let i = 0; i < 4; i++) {
+                    document.getElementById(`edit-answer-${i}`).checked = q.answer.includes(i);
+                }
+            }
+        } else if (q.type === 'BS') {
+            renderStatementsEditor(q.statements, q.answer);
+        }
+        
+        updateQuestionTypeFields();
+        document.getElementById('question-modal').classList.remove('hidden');
+    }
+
+    function updateQuestionTypeFields() {
+        const type = document.getElementById('edit-type').value;
+        
+        document.getElementById('options-editor').classList.toggle('hidden', type === 'BS');
+        document.getElementById('statements-editor').classList.toggle('hidden', type !== 'BS');
+        document.getElementById('answer-editor-pgs').classList.toggle('hidden', type !== 'PGS');
+        document.getElementById('answer-editor-mcma').classList.toggle('hidden', type !== 'MCMA');
+        
+        if (type === 'BS' && editingIndex === -1) {
+            renderStatementsEditor(['', '', '', ''], [false, false, false, false]);
+        }
+    }
+
+    function renderStatementsEditor(statements, answers) {
+        const container = document.getElementById('statements-container');
+        container.innerHTML = statements.map((stmt, i) => `
+            <div class="flex gap-2 items-center mb-2">
+                <input type="text" id="statement-${i}" value="${stmt}" placeholder="Pernyataan ${i + 1}" class="flex-1 px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+                <select id="answer-${i}" class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+                    <option value="true" ${answers[i] === true ? 'selected' : ''}>Benar</option>
+                    <option value="false" ${answers[i] === false ? 'selected' : ''}>Salah</option>
+                </select>
+                ${i >= 4 ? `<button onclick="removeStatement(${i})" class="px-3 py-2 bg-red-100 text-red-600 rounded-xl font-semibold hover:bg-red-200 transition">???</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function addStatement() {
+        const container = document.getElementById('statements-container');
+        const count = container.children.length;
+        const div = document.createElement('div');
+        div.className = 'flex gap-2 items-center mb-2';
+        div.innerHTML = `
+            <input type="text" id="statement-${count}" placeholder="Pernyataan ${count + 1}" class="flex-1 px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+            <select id="answer-${count}" class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition">
+                <option value="true">Benar</option>
+                <option value="false">Salah</option>
+            </select>
+            <button onclick="removeStatement(${count})" class="px-3 py-2 bg-red-100 text-red-600 rounded-xl font-semibold hover:bg-red-200 transition">???</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeStatement(index) {
+        const container = document.getElementById('statements-container');
+        container.children[index].remove();
+    }
+
+    function saveQuestion() {
+        const type = document.getElementById('edit-type').value;
+        const newQuestion = {
+            category: document.getElementById('edit-category').value.trim(),
+            type: type,
+            question: document.getElementById('edit-question').value.trim()
+        };
+        
+        const stimulus = document.getElementById('edit-stimulus').value.trim();
+        if (stimulus) {
+            newQuestion.stimulus = stimulus;
+        }
+        
+        if (currentImageData) {
+            newQuestion.image = currentImageData;
+        }
+        
+        if (!newQuestion.category || !newQuestion.question) {
+            showToast('? Kategori dan pertanyaan harus diisi!', 'red');
+            return;
+        }
+        
+        if (type === 'PGS' || type === 'MCMA') {
+            newQuestion.options = [
+                document.getElementById('edit-option-0').value.trim(),
+                document.getElementById('edit-option-1').value.trim(),
+                document.getElementById('edit-option-2').value.trim(),
+                document.getElementById('edit-option-3').value.trim()
+            ];
+            
+            if (newQuestion.options.some(opt => !opt)) {
+                showToast('? Semua pilihan harus diisi!', 'red');
+                return;
+            }
+            
+            if (type === 'PGS') {
+                newQuestion.answer = [parseInt(document.getElementById('edit-answer-single').value)];
+            } else {
+                newQuestion.answer = [];
+                for (let i = 0; i < 4; i++) {
+                    if (document.getElementById(`edit-answer-${i}`).checked) {
+                        newQuestion.answer.push(i);
+                    }
+                }
+                if (newQuestion.answer.length === 0) {
+                    showToast('? Pilih minimal 1 jawaban benar!', 'red');
+                    return;
+                }
+            }
+        } else if (type === 'BS') {
+            const container = document.getElementById('statements-container');
+            newQuestion.statements = [];
+            newQuestion.answer = [];
+            
+            for (let i = 0; i < container.children.length; i++) {
+                const stmt = document.getElementById(`statement-${i}`).value.trim();
+                const ans = document.getElementById(`answer-${i}`).value === 'true';
+                
+                if (!stmt) {
+                    showToast('? Semua pernyataan harus diisi!', 'red');
+                    return;
+                }
+                
+                newQuestion.statements.push(stmt);
+                newQuestion.answer.push(ans);
+            }
+            
+            if (newQuestion.statements.length === 0) {
+                showToast('? Tambahkan minimal 1 pernyataan!', 'red');
+                return;
+            }
+        }
+        
+        if (editingIndex >= 0) {
+            questions[editingIndex] = newQuestion;
+            showToast('? Soal berhasil diupdate!', 'green');
+        } else {
+            questions.push(newQuestion);
+            showToast('? Soal berhasil ditambahkan!', 'green');
+        }
+        
+        closeQuestionModal();
+        updateEditorStats();
+        renderQuestionsList();
+        
+        // Update answers array
+        answers = new Array(questions.length).fill(null);
+    }
+
+    function deleteQuestion(index) {
+        const confirmed = confirm(`Hapus soal ${index + 1}?\n\n"${questions[index].question}"`);
+        if (confirmed) {
+            questions.splice(index, 1);
+            answers = new Array(questions.length).fill(null);
+            showToast('? Soal berhasil dihapus!', 'green');
+            updateEditorStats();
+            renderQuestionsList();
+        }
+    }
+
+    function closeQuestionModal() {
+        document.getElementById('question-modal').classList.add('hidden');
+        currentImageData = null;
+    }
+
+    function exportQuestions() {
+        const dataStr = JSON.stringify(questions, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `soal_tka_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('? Soal berhasil di-export!', 'green');
+    }
+
+    function showImportModal() {
+        document.getElementById('import-modal').classList.remove('hidden');
+        document.getElementById('import-json').value = '';
+    }
+
+    function closeImportModal() {
+        document.getElementById('import-modal').classList.add('hidden');
+    }
+
+    function importQuestions() {
+        try {
+            const jsonStr = document.getElementById('import-json').value.trim();
+            const imported = JSON.parse(jsonStr);
+            
+            if (!Array.isArray(imported)) {
+                throw new Error('JSON harus berupa array');
+            }
+            
+            // Validate structure
+            for (const q of imported) {
+                if (!q.category || !q.type || !q.question) {
+                    throw new Error('Setiap soal harus punya category, type, dan question');
+                }
+            }
+            
+            questions = imported;
+            answers = new Array(questions.length).fill(null);
+            
+            closeImportModal();
+            updateEditorStats();
+            renderQuestionsList();
+            showToast('? Soal berhasil di-import!', 'green');
+        } catch (error) {
+            showToast('? Error: ' + error.message, 'red');
+        }
+    }
+
+    function startExam() {
+        studentName = document.getElementById('studentName').value.trim();
+        absentNum = document.getElementById('absentNum').value.trim();
+        schoolName = document.getElementById('schoolName').value.trim();
+        
+        if (!studentName || !absentNum || !schoolName) {
+            showToast('? Mohon isi nama, nomor absen, dan asal sekolah!', 'red');
+            return;
+        }
+        
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('exam-page').classList.remove('hidden');
+        document.getElementById('exam-page').style.display = 'block';
+        
+        renderNavGrid();
+        loadQuestion(0);
+        startTimer();
+    }
+
+    function renderNavGrid() {
+        const grid = document.getElementById('nav-grid');
+        grid.innerHTML = '';
+        
+        questions.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-btn w-full aspect-square rounded-lg text-sm font-semibold border-2 border-gray-200 hover:border-blue-400';
+            btn.textContent = i + 1;
+            btn.onclick = () => loadQuestion(i);
+            grid.appendChild(btn);
+        });
+        
+        updateNavGrid();
+    }
+
+    function updateNavGrid() {
+        const buttons = document.querySelectorAll('.nav-btn');
+        let answeredCount = 0;
+        
+        buttons.forEach((btn, i) => {
+            btn.classList.remove('bg-emerald-500', 'text-white', 'border-emerald-500', 'ring-2', 'ring-blue-500', 'ring-offset-2');
+            
+            if (answers[i] !== null) {
+                btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-500');
+                answeredCount++;
+            }
+            
+            if (i === currentQuestion) {
+                btn.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+            }
+        });
+        
+        const progress = (answeredCount / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+        document.getElementById('progress-text').textContent = `${answeredCount}/${questions.length} dijawab`;
+    }
+
+    function loadQuestion(index) {
+        currentQuestion = index;
+        const q = questions[index];
+        
+        document.getElementById('question-number').textContent = `Soal ${index + 1}/${questions.length}`;
+        document.getElementById('question-category').textContent = q.category;
+        
+        const typeLabels = {
+            'PGS': 'PGS - Pilihan Ganda Sederhana',
+            'MCMA': 'PGK MCMA - Pilihan Ganda Kompleks (Pilih Lebih dari 1)',
+            'BS': 'PGK B/S - Benar/Salah'
+        };
+        document.getElementById('question-type').textContent = typeLabels[q.type] || 'PGS';
+        
+        // Handle image
+        const imageBox = document.getElementById('question-image-box');
+        const imageEl = document.getElementById('question-image');
+        if (q.image) {
+            imageEl.src = q.image;
+            imageBox.classList.remove('hidden');
+        } else {
+            imageBox.classList.add('hidden');
+        }
+        
+        // Handle question text with MathJax
+        const questionText = document.getElementById('question-text');
+        questionText.innerHTML = q.question;
+        if (window.MathJax) {
+            MathJax.typesetPromise([questionText]).catch((err) => console.log('MathJax error:', err));
+        }
+        
+        const stimulusBox = document.getElementById('stimulus-box');
+        if (q.stimulus) {
+            stimulusBox.classList.remove('hidden');
+            document.getElementById('stimulus-text').textContent = q.stimulus;
+        } else {
+            stimulusBox.classList.add('hidden');
+        }
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        if (q.type === 'BS') {
+            q.statements.forEach((statement, i) => {
+                const div = document.createElement('div');
+                div.className = 'mb-4';
+                
+                const statementDiv = document.createElement('div');
+                statementDiv.className = 'text-gray-700 mb-2 font-medium';
+                statementDiv.innerHTML = `${i + 1}. ${statement}`;
+                
+                const buttonGroup = document.createElement('div');
+                buttonGroup.className = 'flex gap-2';
+                
+                const benarBtn = document.createElement('button');
+                benarBtn.className = `flex-1 py-2 px-4 rounded-lg border-2 font-semibold transition ${
+                    answers[index] && answers[index][i] === true 
+                        ? 'bg-green-500 text-white border-green-500' 
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-green-300 hover:bg-green-50'
+                }`;
+                benarBtn.textContent = '? BENAR';
+                benarBtn.onclick = () => selectBSAnswer(i, true);
+                
+                const salahBtn = document.createElement('button');
+                salahBtn.className = `flex-1 py-2 px-4 rounded-lg border-2 font-semibold transition ${
+                    answers[index] && answers[index][i] === false 
+                        ? 'bg-red-500 text-white border-red-500' 
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-red-300 hover:bg-red-50'
+                }`;
+                salahBtn.textContent = '? SALAH';
+                salahBtn.onclick = () => selectBSAnswer(i, false);
+                
+                buttonGroup.appendChild(benarBtn);
+                buttonGroup.appendChild(salahBtn);
+                
+                div.appendChild(statementDiv);
+                div.appendChild(buttonGroup);
+                optionsContainer.appendChild(div);
+                
+                // Render MathJax for statements
+                if (window.MathJax) {
+                    MathJax.typesetPromise([statementDiv]).catch((err) => console.log('MathJax error:', err));
+                }
+            });
+        } else {
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, i) => {
+                const isSelected = answers[index] && answers[index].includes(i);
+                const div = document.createElement('div');
+                div.className = `option-item p-4 rounded-xl border-2 cursor-pointer flex items-center gap-4 ${
+                    isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                }`;
+                div.onclick = () => selectAnswer(i);
+                
+                const labelSpan = document.createElement('span');
+                labelSpan.className = `w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                    isSelected ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'
+                }`;
+                labelSpan.textContent = labels[i];
+                
+                const optText = document.createElement('span');
+                optText.className = 'flex-1 text-gray-700';
+                optText.innerHTML = opt;
+                
+                div.appendChild(labelSpan);
+                div.appendChild(optText);
+                
+                if (q.type === 'MCMA' && isSelected) {
+                    const check = document.createElement('span');
+                    check.className = 'text-blue-500 font-bold';
+                    check.textContent = '?';
+                    div.appendChild(check);
+                }
+                
+                optionsContainer.appendChild(div);
+                
+                // Render MathJax for options
+                if (window.MathJax) {
+                    MathJax.typesetPromise([optText]).catch((err) => console.log('MathJax error:', err));
+                }
+            });
+            
+            if (q.type === 'MCMA') {
+                const hint = document.createElement('div');
+                hint.className = 'mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200';
+                hint.innerHTML = '<p class="text-sm text-amber-800"><span class="font-bold">?? Petunjuk:</span> Pilih lebih dari satu jawaban yang benar</p>';
+                optionsContainer.appendChild(hint);
+            }
+        }
+        
+        updateNavGrid();
+    }
+
+    function selectAnswer(optionIndex) {
+        const q = questions[currentQuestion];
+        
+        if (q.type === 'PGS') {
+            answers[currentQuestion] = [optionIndex];
+        } else if (q.type === 'MCMA') {
+            if (!answers[currentQuestion]) {
+                answers[currentQuestion] = [];
+            }
+            const idx = answers[currentQuestion].indexOf(optionIndex);
+            if (idx > -1) {
+                answers[currentQuestion].splice(idx, 1);
+            } else {
+                answers[currentQuestion].push(optionIndex);
+            }
+        }
+        
+        loadQuestion(currentQuestion);
+    }
+    
+    function selectBSAnswer(statementIndex, value) {
+        if (!answers[currentQuestion]) {
+            answers[currentQuestion] = [];
+        }
+        answers[currentQuestion][statementIndex] = value;
+        loadQuestion(currentQuestion);
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            loadQuestion(currentQuestion - 1);
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            loadQuestion(currentQuestion + 1);
+        }
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = document.getElementById('timer');
+            
+            display.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 300) {
+                display.classList.replace('text-red-500', 'text-red-600');
+                display.classList.add('animate-pulse');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                finishExam();
+            }
+        }, 1000);
+    }
+
+    function confirmFinish() {
+        const answered = answers.filter(a => a !== null).length;
+        const remaining = questions.length - answered;
+        const warning = document.getElementById('unanswered-warning');
+        
+        if (remaining > 0) {
+            warning.innerHTML = `Masih ada <span class="font-bold text-red-500">${remaining} soal</span> yang belum dijawab. Apakah Anda yakin ingin mengakhiri?`;
+        } else {
+            warning.textContent = "Semua soal telah dijawab. Anda yakin ingin mengumpulkan?";
+        }
+        
+        document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('confirm-modal').classList.add('hidden');
+    }
+
+    let hasSubmitted = false;
+
+    async function finishExam() {
+        if (hasSubmitted) return;
+        hasSubmitted = true;
+        
+        clearInterval(timer);
+        const result = calculateScore();
+        
+        // Save result to database
+        if (isDataSdkReady) {
+            const finishTime = new Date().toLocaleString('id-ID', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const saveResult = await window.dataSdk.create({
+                student_name: studentName,
+                absent_num: absentNum,
+                school_name: schoolName,
+                score: result.score,
+                correct: result.correct,
+                wrong: result.wrong,
+                empty: result.empty,
+                finish_time: finishTime
+            });
+            
+            if (!saveResult.isOk) {
+                console.error("Failed to save exam result");
+            }
+        }
+        
+        showResults(result);
+    }
+
+    function scoreQuestion(q, userAns) {
+        // Jika tidak dijawab atau kosong
+        if (userAns === null || (Array.isArray(userAns) && userAns.length === 0)) {
+            return 0;
+        }
+
+        if (q.type === 'PGS') {
+            // PGS: benar = 1, salah = 0
+            return userAns[0] === q.answer[0] ? 1 : 0;
+        }
+
+        if (q.type === 'MCMA') {
+            // MCMA: (benar - salah) / total jawaban yang benar
+            let benar = 0;
+            let salah = 0;
+            
+            userAns.forEach(u => {
+                if (q.answer.includes(u)) {
+                    benar++;
+                } else {
+                    salah++;
+                }
+            });
+            
+            const score = (benar - salah) / q.answer.length;
+            return score < 0 ? 0 : score;
+        }
+
+        if (q.type === 'BS') {
+            // BS: proporsi pernyataan yang benar
+            let benar = 0;
+            q.answer.forEach((a, idx) => {
+                if (userAns[idx] === a) {
+                    benar++;
+                }
+            });
+            return benar / q.answer.length;
+        }
+
+        return 0;
+    }
+
+    function calculateScore() {
+        let totalScore = 0;
+        let fullCorrect = 0;  // Soal yang dijawab 100% benar
+        let partial = 0;       // Soal yang dijawab sebagian benar
+        let wrong = 0;         // Soal yang salah total
+        let empty = 0;         // Soal yang tidak dijawab
+
+        questions.forEach((q, i) => {
+            const userAns = answers[i];
+            
+            if (userAns === null || (Array.isArray(userAns) && userAns.length === 0)) {
+                empty++;
+            } else {
+                const questionScore = scoreQuestion(q, userAns);
+                totalScore += questionScore;
+                
+                if (questionScore === 1) {
+                    fullCorrect++;
+                } else if (questionScore > 0) {
+                    partial++;
+                } else {
+                    wrong++;
+                }
+            }
+        });
+
+        const score = ((totalScore / questions.length) * 100).toFixed(2);
+        return { 
+            score, 
+            correct: fullCorrect, 
+            partial: partial,
+            wrong: wrong, 
+            empty: empty,
+            totalScore: totalScore.toFixed(2)
+        };
+    }
+
+    function showResults(res) {
+        document.getElementById('exam-page').classList.add('hidden');
+        document.getElementById('exam-page').style.display = 'none';
+        document.getElementById('confirm-modal').classList.add('hidden');
+        document.getElementById('result-page').classList.remove('hidden');
+        document.getElementById('result-page').style.display = 'block';
+        
+        document.getElementById('result-student-name').textContent = `Nama: ${studentName} | Absen: ${absentNum}`;
+        document.getElementById('result-school-name').textContent = `Sekolah: ${schoolName}`;
+        document.getElementById('score-display').textContent = res.score;
+        document.getElementById('correct-count').textContent = res.correct;
+        document.getElementById('partial-count').textContent = res.partial;
+        document.getElementById('wrong-count').textContent = res.wrong;
+        document.getElementById('empty-count').textContent = res.empty;
+        
+        const details = document.getElementById('result-details');
+        details.innerHTML = '<h4 class="font-bold text-gray-800 mb-3">?? Detail Jawaban:</h4>';
+        
+        questions.forEach((q, i) => {
+            let questionScore = 0;
+            let userAnsText = '-';
+            let correctAnsText = '';
+            let statusClass = 'text-gray-400';
+            let statusIcon = '?';
+            
+            if (answers[i] && answers[i].length > 0) {
+                questionScore = scoreQuestion(q, answers[i]);
+                
+                if (q.type === 'PGS') {
+                    const labels = ['A', 'B', 'C', 'D'];
+                    userAnsText = labels[answers[i][0]];
+                    correctAnsText = labels[q.answer[0]];
+                } else if (q.type === 'MCMA') {
+                    const labels = ['A', 'B', 'C', 'D'];
+                    userAnsText = answers[i].map(idx => labels[idx]).join(', ');
+                    correctAnsText = q.answer.map(idx => labels[idx]).join(', ');
+                } else if (q.type === 'BS') {
+                    const correctCount = q.answer.filter((val, idx) => answers[i][idx] === val).length;
+                    userAnsText = `${correctCount}/${q.answer.length} benar`;
+                    correctAnsText = 'Semua benar';
+                }
+                
+                if (questionScore === 1) {
+                    statusClass = 'text-green-600';
+                    statusIcon = '?';
+                } else if (questionScore > 0) {
+                    statusClass = 'text-blue-600';
+                    statusIcon = '?';
+                    userAnsText += ` (Nilai: ${(questionScore * 100).toFixed(0)}%)`;
+                } else {
+                    statusClass = 'text-red-600';
+                    statusIcon = '?';
+                }
+            }
+            
+            details.innerHTML += `
+                <div class="py-3 border-b border-gray-200">
+                    <div class="flex items-center justify-between ${statusClass}">
+                        <span class="text-sm font-medium">${i + 1}. ${q.category} (${q.type})</span>
+                        <span class="text-xs font-bold px-3 py-1 rounded ${
+                            questionScore === 1 ? 'bg-green-100 text-green-700' :
+                            questionScore > 0 ? 'bg-blue-100 text-blue-700' :
+                            answers[i] && answers[i].length > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                        }">Skor: ${(questionScore * 100).toFixed(0)}</span>
+                    </div>
+                    <div class="mt-2 text-sm ${statusClass}">
+                        ${!answers[i] || answers[i].length === 0 ? '? Tidak dijawab' : questionScore === 1 ? `${statusIcon} Jawaban: ${userAnsText}` : `${statusIcon} Jawaban: ${userAnsText} ? Benar: ${correctAnsText}`}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function restartExam() {
+        location.reload();
+    }
+
+    // Admin Functions
+    function showAdminLogin() {
+        document.getElementById('admin-login-modal').classList.remove('hidden');
+        document.getElementById('admin-error').classList.add('hidden');
+        document.getElementById('adminPin').value = '';
+    }
+
+    function closeAdminLogin() {
+        document.getElementById('admin-login-modal').classList.add('hidden');
+    }
+
+    function loginAdmin() {
+        const pin = document.getElementById('adminPin').value;
+        const correctPin = window.elementSdk?.config?.admin_pin || defaultConfig.admin_pin;
+        
+        if (pin === correctPin) {
+            closeAdminLogin();
+            showAdminPanel();
+        } else {
+            document.getElementById('admin-error').classList.remove('hidden');
+        }
+    }
+
+    function showAdminPanel() {
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('login-page').style.display = 'none';
+        document.getElementById('admin-page').classList.remove('hidden');
+        document.getElementById('admin-page').style.display = 'block';
+        
+        setTimeout(() => {
+            updateAdminDashboard();
+        }, 100);
+    }
+
+    function logoutAdmin() {
+        document.getElementById('admin-page').classList.add('hidden');
+        document.getElementById('admin-page').style.display = 'none';
+        document.getElementById('login-page').classList.remove('hidden');
+    }
+
+    function updateAdminDashboard() {
+        if (studentsData.length === 0) {
+            document.getElementById('admin-total-students').textContent = '0';
+            document.getElementById('admin-avg-score').textContent = '0.00';
+            document.getElementById('admin-max-score').textContent = '0.00';
+            document.getElementById('admin-min-score').textContent = '0.00';
+            
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="px-4 py-8 text-center text-gray-400">
+                        Belum ada data peserta ujian
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        const total = studentsData.length;
+        const scores = studentsData.map(s => parseFloat(s.score));
+        const avgScore = (scores.reduce((a, b) => a + b, 0) / total).toFixed(2);
+        const maxScore = Math.max(...scores).toFixed(2);
+        const minScore = Math.min(...scores).toFixed(2);
+
+        document.getElementById('admin-total-students').textContent = total;
+        document.getElementById('admin-avg-score').textContent = avgScore;
+        document.getElementById('admin-max-score').textContent = maxScore;
+        document.getElementById('admin-min-score').textContent = minScore;
+
+        const tbody = document.getElementById('admin-table-body');
+        tbody.innerHTML = studentsData.map((student, index) => `
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="px-4 py-3 text-sm text-gray-700">${index + 1}</td>
+                <td class="px-4 py-3 text-sm font-semibold text-gray-800">${student.student_name}</td>
+                <td class="px-4 py-3 text-sm text-gray-700">${student.absent_num}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${student.school_name || '-'}</td>
+                <td class="px-4 py-3">
+                    <span class="px-3 py-1 rounded-full text-sm font-bold ${
+                        parseFloat(student.score) >= 80 ? 'bg-green-100 text-green-700' :
+                        parseFloat(student.score) >= 60 ? 'bg-blue-100 text-blue-700' :
+                        'bg-red-100 text-red-700'
+                    }">${parseFloat(student.score).toFixed(2)}</span>
+                </td>
+                <td class="px-4 py-3 text-sm text-green-600 font-semibold">${student.correct}</td>
+                <td class="px-4 py-3 text-sm text-red-600 font-semibold">${student.wrong}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${student.empty}</td>
+                <td class="px-4 py-3 text-sm text-gray-600">${student.finish_time}</td>
+            </tr>
+        `).join('');
+    }
+
+    function downloadRecap() {
+        if (studentsData.length === 0) {
+            showToast('? Belum ada data untuk diunduh', 'red');
+            return;
+        }
+
+        try {
+            let csvContent = '\uFEFF';
+            csvContent += 'REKAP NILAI UJIAN TKA SD\n';
+            csvContent += `Tanggal Unduh: ${new Date().toLocaleString('id-ID')}\n\n`;
+            csvContent += 'No,Nama Siswa,No. Absen,Asal Sekolah,Nilai,Benar,Salah,Kosong,Waktu Selesai\n';
+            
+            studentsData.forEach((student, index) => {
+                csvContent += `${index + 1},"${student.student_name}","${student.absent_num}","${student.school_name || '-'}",${student.score},${student.correct},${student.wrong},${student.empty},"${student.finish_time}"\n`;
+            });
+
+            const scores = studentsData.map(s => parseFloat(s.score));
+            const avgScore = (scores.reduce((a, b) => a + b, 0) / studentsData.length).toFixed(2);
+            const maxScore = Math.max(...scores).toFixed(2);
+            const minScore = Math.min(...scores).toFixed(2);
+
+            csvContent += '\nSTATISTIK\n';
+            csvContent += `Total Peserta,${studentsData.length}\n`;
+            csvContent += `Nilai Rata-rata,${avgScore}\n`;
+            csvContent += `Nilai Tertinggi,${maxScore}\n`;
+            csvContent += `Nilai Terendah,${minScore}\n`;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Rekap_Nilai_TKA_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            
+            setTimeout(() => {
+                link.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 200);
+            }, 50);
+
+            showToast('? Rekap berhasil diunduh!', 'green');
+        } catch (error) {
+            console.error("Download error:", error);
+            showToast('? Gagal mengunduh rekap: ' + error.message, 'red');
+        }
+    }
+    
+    function showToast(message, color) {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 bg-${color}-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-pulse`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Data SDK Handler
+    const dataHandler = {
+        onDataChanged(data) {
+            studentsData = data;
+            
+            const adminPage = document.getElementById('admin-page');
+            if (adminPage && !adminPage.classList.contains('hidden')) {
+                updateAdminDashboard();
+            }
+        }
+    };
+
+    async function initDataSdk() {
+        if (window.dataSdk) {
+            try {
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (initResult.isOk) {
+                    isDataSdkReady = true;
+                } else {
+                    console.error("Failed to initialize Data SDK:", initResult.error);
+                }
+            } catch (error) {
+                console.error("Error initializing Data SDK:", error);
+            }
+        }
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(initDataSdk, 100);
+    });
+
+    function onConfigChange(config) {
+        const title = config.exam_title || defaultConfig.exam_title;
+        const titleEl = document.getElementById('exam-title-display');
+        if (titleEl) titleEl.textContent = title;
+    }
+
+    if (window.elementSdk) {
+        window.elementSdk.init({
+            defaultConfig,
+            onConfigChange,
+            mapToCapabilities: (config) => ({
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            }),
+            mapToEditPanelValues: (config) => new Map([
+                ["exam_title", config.exam_title || defaultConfig.exam_title],
+                ["school_name", config.school_name || defaultConfig.school_name],
+                ["admin_pin", config.admin_pin || defaultConfig.admin_pin]
+            ])
+        });
+    }
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9be27f99b0b0a8f7',t:'MTc2ODQ0OTk2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
