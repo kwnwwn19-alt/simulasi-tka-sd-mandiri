@@ -1617,3 +1617,110 @@
 </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9be27f99b0b0a8f7',t:'MTc2ODQ0OTk2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi TKA SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    
+    <style>
+        body { font-family: 'Nunito', sans-serif; }
+        .option-item { transition: all 0.2s ease; cursor: pointer; }
+        .option-item:hover { transform: translateX(4px); border-color: #6366f1; }
+        .selected-option { border-color: #4f46e5 !important; background-color: #eef2ff; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+
+    <script>
+        // --- LOGIKA JAVASCRIPT UNTUK GITHUB ---
+        
+        // 1. Database Soal (Contoh)
+        let questions = [
+            {
+                category: "Matematika",
+                type: "PGS",
+                question: "Berapakah hasil dari $ \frac{1}{2} + 0.5 $?",
+                options: ["1", "1.5", "2", "0.75"],
+                answer: 0
+            },
+            {
+                category: "Bahasa Indonesia",
+                type: "PGS",
+                question: "Ide pokok paragraf sering disebut juga...",
+                options: ["Gagasan pendukung", "Gagasan utama", "Kalimat penjelas", "Judul"],
+                answer: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = {};
+        let timer;
+
+        // 2. Fungsi Mulai Ujian
+        function startExam() {
+            const name = document.getElementById('studentName').value;
+            if(!name) return alert("Masukkan Nama!");
+            
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('exam-page').classList.remove('hidden');
+            
+            renderQuestion();
+            startTimer(150); // 150 menit
+        }
+
+        // 3. Render Soal
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-text').innerHTML = q.question;
+            document.getElementById('question-category').innerText = q.category;
+            document.getElementById('question-number').innerText = `Soal ${currentQuestion + 1}/${questions.length}`;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                const div = document.createElement('div');
+                div.className = `option-item p-4 border-2 rounded-xl bg-white ${userAnswers[currentQuestion] === index ? 'selected-option' : 'border-gray-200'}`;
+                div.innerHTML = opt;
+                div.onclick = () => selectOption(index);
+                optionsContainer.appendChild(div);
+            });
+
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function selectOption(index) {
+            userAnswers[currentQuestion] = index;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        // Tambahkan fungsi timer dan finishExam sesuai kebutuhan...
+    </script>
+</body>
+</html>
